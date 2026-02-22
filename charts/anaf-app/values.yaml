@@ -1,0 +1,107 @@
+# Default values for anaf-app.
+
+# Backend (NestJS) configuration
+backend:
+  replicaCount: 1
+  image:
+    repository: rares2002/anaf-app-be
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 3000
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  env:
+    DB_HOST: ""  # defaults to the in-chart MySQL service name
+    DB_PORT: "3306"
+    DB_NAME: "anafdb"
+    DB_USER: "anafuser"
+    # REQUIRED: set a strong secret before deploying to production
+    JWT_SECRET: ""
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Frontend (React) configuration
+frontend:
+  replicaCount: 1
+  image:
+    repository: rares2002/anaf-app-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  env:
+    # Set to the backend service URL accessible from the user's browser.
+    # Example: "https://api.anaf-app.example.com"
+    REACT_APP_API_URL: ""
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# MySQL configuration
+mysql:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: mysql
+    pullPolicy: IfNotPresent
+    tag: "8.0"
+  service:
+    type: ClusterIP
+    port: 3306
+  auth:
+    # REQUIRED: set strong passwords before deploying to production
+    rootPassword: ""
+    database: "anafdb"
+    username: "anafuser"
+    password: ""
+  persistence:
+    enabled: true
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 5Gi
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: anaf-app.local
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend: backend
+        - path: /
+          pathType: Prefix
+          backend: frontend
+  tls: []
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""

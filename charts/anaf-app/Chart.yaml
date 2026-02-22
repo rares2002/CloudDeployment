@@ -1,0 +1,13 @@
+apiVersion: v2
+name: anaf-app
+description: A Helm chart for deploying the AnafApp - population management application for ANAF
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - anaf
+  - nestjs
+  - react
+  - mysql
+maintainers:
+  - name: rares2002

@@ -1,0 +1,18 @@
+{{- if .Values.mysql.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "anaf-app.fullname" . }}-mysql-pvc
+  labels:
+    {{- include "anaf-app.labels" . | nindent 4 }}
+    {{- include "anaf-app.mysql.selectorLabels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.mysql.persistence.accessMode }}
+  {{- if .Values.mysql.persistence.storageClass }}
+  storageClassName: {{ .Values.mysql.persistence.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.mysql.persistence.size }}
+{{- end }}
